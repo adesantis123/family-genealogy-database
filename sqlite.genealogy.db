@@ -1,0 +1,198 @@
+sqlite3 genealogy.db
+
+CREATE TABLE [Individual] (
+[IndividualID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[LastName] NVARCHAR(25) NULL NULL,
+[FirstName] NVARCHAR(25) NULL NULL,
+[MiddleName] NVARCHAR(25) NULL,
+[MaidenName] NVARCHAR(25) NULL,
+[FamilarName] NVARCHAR (25) NULL,
+[SEX] CHAR(1) NULL CHECK (SEX='M' OR SEX='F'),
+[Gender] CHAR(1) NULL,
+[DOB] DATE NULL,
+[BirthPlace] NVARCHAR(25) NULL,
+[DOD] DATE NULL,
+[DeathPlace] NVARCHAR(25) NULL,
+[IndNote] NVARCHAR(1000) NULL
+);
+
+CREATE TABLE [Source] (
+[SourceID] INTEGER(20) NOT NULL,
+[SourceName] NVARCHAR (25) NOT NULL,
+[IndividualID] INTEGER NOT NULL,
+FOREIGN KEY (IndividualID) REFERENCES
+Individual(IndividualID)
+);
+
+CREATE TABLE [ParentType] (
+[ParentTypeID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[ParentTypeName] VARCHAR(10) NULL NULL,
+[ParentTypeNotes] VARCHAR(1000) NULL
+);
+
+CREATE TABLE [Parent] (
+[ParentID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[IndividualID] INTEGER NOT NULL,
+[ParentTypeID] INTEGER NULL,
+[ParentNotes] NVARCHAR(1000) NULL,
+FOREIGN KEY (IndividualID) REFERENCES
+Individual(IndividualID)
+FOREIGN KEY (ParentTypeID) REFERENCES
+Parent_Type(ParentTypeID)
+);
+
+CREATE TABLE [Family] (
+[FamilyID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[IndividualID] INTEGER NOT NULL,
+[FamilyHead_1_ID] INTEGER NULL,
+[FamilyHead_2_ID] INTEGER NULL,
+[FamilyName] NVARCHAR(25) NULL,
+[Family_Desc] NVARCHAR(1000) NULL,
+[Family_Date_Start] DATE NULL,
+[Family_Date_End] DATE NULL,
+[Family_Notes] NVARCHAR(1000) NULL,
+FOREIGN KEY (IndividualID) REFERENCES
+Individual(IndividualID)
+);
+
+CREATE TABLE [RelationshipType] (
+[RelationshipTypeID]  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[RelationshipTypeName] NVARCHAR(25) NULL,
+[RelationshipTypeNotes] NVARCHAR(1000) NULL
+);
+
+CREATE TABLE [RoleType] (
+[RoleTypeID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[RoleTypeName] NVARCHAR NULL,
+[RoleTypeNotes] NVARCHAR(1000) NULL
+);
+
+CREATE TABLE [Relationship] (
+[RelationshipID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[IndividualID] INTEGER NOT NULL,
+[RelationshipTypeID] INTEGER NULL,
+[FamilyID] INTEGER NULL,
+[RoleTypeID] INTEGER NULL,
+[Individual_1_ID] INTEGER NULL,
+[Individual_2_ID] INTEGER NULL,
+[Invididual_1_Role_ID] INTEGER NULL,
+[Individual_2_Role_ID] INTEGER NULL,
+[Relationship_Date_Start] DATE NULL,
+[Relationship_Date_End] DATE NULL,
+[Relationship_Notes] NVARCHAR(1000) NULL,
+FOREIGN KEY (IndividualID) REFERENCES
+Individual(IndividualID)
+FOREIGN KEY (FamilyID) REFERENCES
+Family(FamilyID)
+FOREIGN KEY (RelationshipTypeID) REFERENCES
+RelationshipType(RelationshipTypeID)
+FOREIGN KEY (RoleTypeID) REFERENCES
+RoleType(RoleTypeID)
+);
+
+CREATE TABLE [OccupationType] (
+[OccupationTypeID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[ProfessoinName] NVARCHAR(35) NULL,
+[ProfessionDesc] NVARCHAR(1000) NULL,
+[ProfessionNotes] NVARCHAR(1000) NULL
+);
+
+CREATE TABLE [Occupation] (
+[OccupationID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[IndividualID] INTEGER NOT NULL,
+[OccupationTypeID] INTEGER NULL,
+[ProfStartDate] DATE NULL,
+[ProfEndDate] DATE NULL,
+[ProfNotes] NVARCHAR(1000) NULL,
+FOREIGN KEY (IndividualID) REFERENCES
+Individual(IndividualID)
+FOREIGN KEY (OccupationTypeID) REFERENCES
+OccupationType(OccupationTypeID)
+);
+
+CREATE TABLE [HealthConditionType] (
+[HealthConditionTypeID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[HealthConditionTypeName] NVARCHAR(100) NULL,
+[HealthConditionTypeNote] NVARCHAR(1000) NULL
+);
+
+CREATE TABLE [HealthCondition] (
+[HealthConditionID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[HealthConditionTypeID] INTEGER NULL,
+[IndividualID] INTEGER NOT NULL,
+FOREIGN KEY (HealthConditionTypeID) REFERENCES
+HealthConditionType(HealthCondiitionTypeID)
+FOREIGN KEY (IndividualID) REFERENCES
+Individual(IndividualID)
+);
+
+CREATE TABLE [EducationType] (
+[EducationTypeID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[EducationTypeName] NVARCHAR(30) NOT NULL,
+[EducationTypeNotes] NVARCHAR(1000) NULL,
+);
+
+CREATE TABLE [Education] (
+[EducationID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[EducationTypeID] INTEGER NULL,
+[IndividualID] INTEGER NOT NULL,
+[EducationName] NVARCHAR(30) NOT NULL,
+[EducationInstitution] NVARCHAR(30) NULL,
+[EducationField] NVARCHAR(30) NULL,
+[EducationNotes] NVARCHAR(1000) NULL,
+FOREIGN KEY (IndividualID) REFERENCES
+Individual(IndividualID)
+FOREIGN KEY (EducationTypeID) REFERENCES
+EducationType(EducationTypeID)
+);
+
+CREATE TABLE [IndividualMemory] (
+[IndividualMemoryID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[IndividualID] INTEGER NOT NULL,
+[IndividualMemoryName] NVARCHAR(30) NOT NULL,
+[IndividualMemoryDate] DATE NOT NULL,
+[IndividualMemoryNotes] NVARCHAR(1000) NULL,
+[IndividualMemoryObject] NVARCHAR(30) NULL,
+FOREIGN KEY (IndividualID) REFERENCES
+Individual(IndividualID)
+);
+
+CREATE TABLE [FamilyEvent] (
+[FamilyEventID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[FamilyID] INTEGER NOT NULL,
+[FamilyEventName] NVARCHAR(30) NOT NULL,
+[FamilyEventDate] DATE NOT NULL,
+[FamilyEventNotes] NVARCHAR(1000) NOT NULL,
+FOREIGN KEY (FamilyID) REFERENCES
+Family(FamilyID)
+);
+
+CREATE TABLE [ObjectType] (
+[ObjectTypeID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[ObjectTypeName] NVARCHAR(30) NOT NULL,
+[ObjectTypeNotes] NVARCHAR(1000) NULL
+);
+
+CREATE TABLE [FamilyEventObject] (
+[FamilyEventObjectID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[FamilyEventID] INTEGER NOT NULL,
+[FamilyEventObjectName] NVARCHAR(30) NOT NULL,
+[FamilyEventObjectFile) NVARCHAR(30) NULL,
+[FamilyEventObjectNotes] NVARCHAR(1000) NULL,
+[ObjectTypeID] INTEGER NOT NULL,
+FOREIGN KEY (ObjectTypeID) REFERENCES
+ObjectType(ObjectTypeID)
+FOREIGN KEY (FamilyEventID) REFERENCES
+FamilyEvent(FamilyEventID)
+);
+
+CREATE TABLE [IndividualMemoryObject] (
+[IndividualMemoryObjectID] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+[IndividualMemoryID] INTEGER NULL,
+[ObjectTypeID] INTEGER NULL,
+FOREIGN KEY (IndividualMemoryID) REFERENCES
+IndividualMemory(FamilyMemoryID)
+FOREIGN KEY (ObjectTypeID) REFERENCES
+ObjectType(ObjectTypeID)
+);
+
